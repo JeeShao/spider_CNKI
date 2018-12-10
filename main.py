@@ -47,7 +47,7 @@ def save_abstract(file,str):
 	try:
 		with open(file,'w') as f:
 			f.write(str)
-	except IOError as err:
+	except Exception as err:
 		print(file,err)
 		pass
 
@@ -121,7 +121,7 @@ def get_abstract_by_url(driver,url,year_dir):
 def main():
 	URL = {"外语教学与研究":"http://yuanjian.cnki.net/CJFD/Detail/Index/WJYY",
 	       "上海外国语大学学报":"http://yuanjian.cnki.net/CJFD/Detail/Index/WYXY"}
-	PATH = '摘要文件'
+	PATH = './摘要文件'
 	mkdir(PATH)
 	driver = webdriver.Chrome()  #指定使用的浏览器，初始化webdriver
 	driver.implicitly_wait(10) # seconds
@@ -155,7 +155,7 @@ def main():
 if __name__ == '__main__':
 	zh_pattern = re.compile(u'[\u4e00-\u9fa5]+') #判断中文
 	csv_header=['题目','URL']
-	f = open('paper_urls.csv','w',newline='')
+	f = open('./paper_urls.csv','w',newline='')
 	writer = csv.writer(f)
 	writer.writerow([csv_header])
 	main()
