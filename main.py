@@ -158,3 +158,4 @@ if __name__ == '__main__':
 	writer = csv.writer(f)
 	writer.writerow([csv_header])
 	main()
+	f.close()
