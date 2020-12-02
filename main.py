@@ -60,7 +60,7 @@ def get_terms_url_by_year(driver,year_elem):
 	year_elem.click()
 	# time.sleep(0.5)
 	WebDriverWait(driver, 20).until(lambda s: s.execute_script("return jQuery.active == 0"))#根据jquery是否执行完毕来判定ajax加载完毕 （也可用selenium的隐式等待）
-	terms = driver.find_elements_by_xpath("//div[@class='pakage r-bian']")
+	terms = driver.find_elements_by_xpath("//div[@class='pakage r-bian']") #"//div[@class='meneame']/a"
 	for term in terms:
 		text = term.find_element_by_tag_name("div").get_attribute("title")#2018年第05期
 		url = term.find_element_by_tag_name("a").get_attribute("href")#2018年第05期的url
@@ -134,7 +134,6 @@ def main():
 		journal_dir = os.path.join(PATH,journal_name)
 		mkdir(journal_dir)
 		BASE_URL = journal_url#上海外国语大学学报
-		
 		for n in range(start,end):#遍历每一年期刊
 			driver.get(BASE_URL)  #请求网页 	
 			soup = BeautifulSoup(driver.page_source, 'lxml')
