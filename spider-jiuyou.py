@@ -38,7 +38,7 @@ def getData():
     driver.implicitly_wait(0.5)  # 隐式等待1seconds页面加载完成 ，为全局设置，设置后所有的元素定位都会等待给定的时间，直到元素出现为止
     base = "https://www.9game.cn/news/0_"
 
-    for page in range(1, 2):
+    for page in range(1, 1001):
         URL = base + str(page) + "/"
         print("==============url:", URL, "=================")
         driver.get(URL)
@@ -79,6 +79,7 @@ def getData():
                 newsUrl,
                 newsImgsNum
                 ])
+            f.flush()
     #     windows = driver.window_handles  # 获取当前所有窗口句柄 -> list
     #     driver.switch_to.window(windows[-1])  # 切换到最新打开的窗口
     #     driver.close()  # 关闭最新打开的窗口
