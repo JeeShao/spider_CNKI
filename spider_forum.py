@@ -5,15 +5,12 @@
 # @Author  : Jee
 
 import csv
-import traceback
 from selenium import webdriver  # 导入Selenium的webdriver
 from selenium.webdriver.chrome.options import Options
 import logging
 
-
 logging.basicConfig(format='%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s',
                     level=logging.WARNING)
-
 # setting of driver
 options = Options()
 options.add_argument('--headless')
@@ -30,7 +27,6 @@ def isElementExist(driver, element):
     except:
         flag = False
         return flag
-
 
 # get all topics` name and url
 # return [{"tpName": tpName, "tpUrl": tpUrl},{},{},...]
@@ -53,7 +49,6 @@ def getTopics():
             writer.writerow([tpName, tpUrl])
             f.flush()
     return data
-
 
 # get posts of one topic
 def getPosts(topics):
