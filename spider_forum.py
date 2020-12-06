@@ -5,9 +5,20 @@
 # @Author  : Jee
 
 import csv
+import traceback
 from selenium import webdriver  # 导入Selenium的webdriver
 from selenium.webdriver.chrome.options import Options
+import logging
 
+
+logging.basicConfig(format='%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s',
+                    level=logging.WARNING)
+
+# setting of driver
+options = Options()
+options.add_argument('--headless')
+driver = webdriver.Chrome(chrome_options=options)
+driver.implicitly_wait(0.01)
 
 # 判断元素存在
 def isElementExist(driver, element):
@@ -21,62 +32,74 @@ def isElementExist(driver, element):
         return flag
 
 
-# get topic name and url
+# get all topics` name and url
 # return [{"tpName": tpName, "tpUrl": tpUrl},{},{},...]
 def getTopics():
     global writer
     data = []
-    chrome_options = Options()
-    # 设置chrome浏览器无界面模式
-    chrome_options.add_argument('--headless')
-    driver = webdriver.Chrome(chrome_options=chrome_options)  # 指定使用的浏览器，初始化webdriver
-    driver.implicitly_wait(0.5)  # 隐式等待1seconds页面加载完成 ，为全局设置，设置后所有的元素定位都会等待给定的时间，直到元素出现为止
     base = "http://bbs.9game.cn/forum-5981-"
 
-    for page in range(1, 2):
+    for page in range(1, 5):
         URL = base + str(page) + ".html"
-        print("\n==============url:", URL, "=================")
+        print("==========", URL, "==========")
         driver.get(URL)
         topics = driver.find_elements_by_xpath("//a[@class='xst']")
-        print(len(topics))
         for tp in topics:
             tpName = tp.text  # topic title
             tpName = str(bytes(tpName, encoding='utf-8').decode('utf-8').encode('gbk', 'ignore').decode('gbk'))
+            tpName = tpName.strip()
             tpUrl = tp.get_attribute('href')  # topic url
-            print(tpName, " ", tpUrl)
             data.append({"tpName": tpName, "tpUrl": tpUrl})
             writer.writerow([tpName, tpUrl])
             f.flush()
-    driver.quit()
     return data
 
-# get topics` posts
+
+# get posts of one topic
 def getPosts(topics):
-    chrome_options = Options()
-    # 设置chrome浏览器无界面模式
-    chrome_options.add_argument('--headless')
-    driver = webdriver.Chrome(chrome_options=chrome_options)
-    driver.implicitly_wait(0.5)
-    for tp in topics:
+    postOfTopic = {}
+    for tp in topics:  # 话题
         tpName = tp['tpName']
         tpUrl = tp['tpUrl']
-        driver.get(tpUrl)
-        posts = driver.find_elements_by_xpath("//td[@class='t_f']")
-        print("\n=====",tpName,"的评论信息:")
-        for p in posts:
-            post = p.text
-            print(post)
+        pages = getPostsAllPages(tpUrl, "//a[@class='nxt']")
+        print("\n【", tpName, "】的评论信息:")
+        allPost = [] # 单个话题的所有评论
+        for i, p in enumerate(pages):  # 页码
+            print(".......第", i + 1, "页.......")
+            driver.get(p)
+            posts = driver.find_elements_by_xpath("//td[@class='t_f']")
+            for p in posts:  # 评论
+                post = p.text
+                allPost.append(post)
+        postOfTopic[tpName] = allPost
+    return postOfTopic
 
 
-
+# get url of all pages for one topic
+def getPostsAllPages(baseUrl, element):
+    allPageUrl = [baseUrl]
+    url = baseUrl
+    while url != "":
+        try:
+            driver.get(url)
+        except Exception as e:
+            # traceback.print_exc()
+            logging.warning(e)
+            break
+        nextPage = driver.find_elements_by_xpath(element)
+        if len(nextPage) == 0:
+            break
+        url = nextPage[0].get_attribute('href')
+        allPageUrl.append(url)
+    return allPageUrl
 
 
 if __name__ == '__main__':
-    csv_header = ['话题名称','话题地址']
+    csv_header = ['话题名称', '话题地址']
     f = open('./jiuyou_forum_wzry.csv', 'w', newline='')
     writer = csv.writer(f, dialect='excel')
     writer.writerow(csv_header)
     data = getTopics()
     getPosts(data)
+    driver.quit()
     f.close()
-
