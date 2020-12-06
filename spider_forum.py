@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # @FileName: spider_forum.py
-# @function: #
 # @Time    : 2020/12/4 0:10
 # @Author  : Jee
 
