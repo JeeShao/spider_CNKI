@@ -66,7 +66,11 @@ def getPosts(topics):
         allPost = [] # 单个话题的所有评论
         for i, p in enumerate(pages):  # 页码
             print(".......第", i + 1, "页.......")
-            driver.get(p)
+            try:
+                driver.get(p)
+            except Exception as e:
+                logging.warning(e)
+                continue
             posts = driver.find_elements_by_xpath("//td[@class='t_f']")
             for p in posts:  # 评论
                 post = p.text
