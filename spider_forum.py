@@ -8,8 +8,7 @@ from selenium import webdriver  # 导入Selenium的webdriver
 from selenium.webdriver.chrome.options import Options
 import logging
 
-logging.basicConfig(format='%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s',
-                    level=logging.WARNING)
+logging.basicConfig(format='%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s',level=logging.WARNING)
 # setting of driver
 options = Options()
 options.add_argument('--headless')
